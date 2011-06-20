@@ -104,7 +104,6 @@ BuildRequires:  valgrind
 BuildRequires:  gsm-devel         
 BuildRequires:  unixODBC-devel    
 BuildRequires:  gnutls-devel      
-BuildRequires:  prelink
 BuildRequires:  gettext-devel
 BuildRequires:  mesaglu-devel
 BuildRequires:  libv4l-devel 
