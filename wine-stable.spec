@@ -1,15 +1,16 @@
 %ifarch x86_64
-%define	wine	wine64-stable
+%define	wine	wine64
 %define	mark64	()(64bit)
 %else
-%define	wine	wine-stable
+%define	wine	wine
 %define	mark64	%{nil}
 %endif
 %define	lib_name_orig	lib%{name}
 %define	lib_major	1
 %define	lib_name	%mklibname %{name} %{lib_major}
 %define	lib_name_devel	%{mklibname -d wine}
-%define oname wine
+%define	oname 		wine
+
 
 # On 32-bit we have
 # wine32 - those 32-bit binaries that are also used on 64-bit for 32-bit support
@@ -18,29 +19,23 @@
 # wine64 - all 64-bit files (suggests 'wine32')
 # - Anssi 07/2010
 
-Name:		wine-stable
+Name:		wine
 #(peroyvind): please do backports for new versions
-Version:	1.2.3
-%define pre	0
-%define rel	2
-%if %pre
-Release:	%mkrel 0.%pre.%rel
-%define o_ver	%version-%pre
-%else
-Release:	%mkrel %rel
-%define o_ver	%version
-%endif
+Version:	1.4
+%define rel	1
+Release:	%mkrel %{rel}
+%define o_ver	%{version}
 Epoch:		1
 Summary:	WINE Is Not An Emulator - runs MS Windows programs
 License:	LGPLv2+
 Group:		Emulators
 URL:		http://www.winehq.com/
-BuildRoot:      %_tmppath/%{oname}-%{version}-%{release}-buildroot
 Source0:	http://ibiblio.org/pub/linux/system/emulators/wine/%{oname}-%{o_ver}.tar.bz2
 Source1:	http://ibiblio.org/pub/linux/system/emulators/wine/%{oname}-%{o_ver}.tar.bz2.sign
 
 # RH stuff
 Source2:        wine.init
+Source10:	wine.rpmlintrc
 Patch0:		wine-1.0-rc3-fix-conflicts-with-openssl.patch
 Patch1:		wine-1.1.7-chinese-font-substitutes.patch
 # (Anssi 05/2008) Adds:
@@ -54,12 +49,8 @@ Patch1:		wine-1.1.7-chinese-font-substitutes.patch
 Patch108:	wine-mdkconf.patch
 
 #(eandry) add a pulseaudio sound driver (from http://art.ified.ca/downloads/ )
-# Patch400:	http://art.ified.ca/downloads/winepulse/winepulse-0.39-configure.ac.patch
-#
+
 # Rediff configure.ac patch manually until winepulse upstream fixes it
-# Patch400:	wine-1.3.20-winepulse-configure.ac.patch
-Patch401:	http://art.ified.ca/downloads/winepulse/winepulse-0.38.patch
-Patch402:	http://art.ified.ca/downloads/winepulse/winepulse-winecfg-1.3.11.patch
 
 # (anssi) Wine needs GCC 4.4+ on x86_64 for MS ABI support. Note also that
 # 64-bit wine cannot run 32-bit programs without wine32.
@@ -99,7 +90,6 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  openldap-devel    
 BuildRequires:  libxslt-devel     
 BuildRequires:  dbus-devel        
-BuildRequires:  hal-devel         
 BuildRequires:  valgrind          
 BuildRequires:  gsm-devel         
 BuildRequires:  unixODBC-devel    
@@ -119,7 +109,7 @@ BuildRequires:	freetype2-devel autoconf docbook-utils docbook-dtd-sgml
 BuildRequires:	cups-devel jackit-devel imagemagick isdn4k-utils-devel xpm-devel
 BuildRequires:	sane-devel glibc-static-devel ungif-devel chrpath
 BuildRequires:	desktop-file-utils libalsa-devel openldap-devel lcms-devel
-BuildRequires:	libxslt-devel dbus-devel hal-devel
+BuildRequires:	libxslt-devel dbus-devel
 BuildRequires:	valgrind librsvg pulseaudio-devel gettext-devel
 BuildRequires:	gsm-devel
 BuildRequires:	mesaglu-devel
@@ -146,24 +136,29 @@ be used for porting Win32 code into native Unix executables.
 %package -n	%{wine}
 Summary:	WINE Is Not An Emulator - runs MS Windows programs
 Group:		Emulators
-Suggests:	wine32 = %{epoch}:%{version}-%{release}
+Suggests:	wine32 = %{EVRD}
 Suggests:	wine64-gecko
 %else
 # on 32-bit we always want wine32 package
-Requires:	wine32 = %{epoch}:%{version}-%{release}
+Requires:	wine32 = %{EVRD}
 %endif
 
-Provides:	%{wine}-utils = %{epoch}:%{version}-%{release} %{wine}-full = %{epoch}:%{version}-%{release}
-Provides:	%{lib_name}-capi = %{epoch}:%{version}-%{release} %{lib_name}-twain = %{epoch}:%{version}-%{release}
-Provides:	%{lib_name} = %{epoch}:%{version}-%{release}
-Provides:	wine-bin = %{epoch}:%{version}-%{release}
+Provides:	%{wine}-utils = %{EVRD} %{wine}-full = %{EVRD}
+Provides:	%{lib_name}-capi = %{EVRD} %{lib_name}-twain = %{EVRD}
+Provides:	%{lib_name} = %{EVRD}
+Provides:	wine-bin = %{EVRD}
 Obsoletes:	%{wine}-utils %{wine}-full %{lib_name}-capi %{lib_name}-twain
-Obsoletes:	%{lib_name} <= %{epoch}:%{version}-%{release}
+Obsoletes:	%{lib_name} <= %{EVRD}
 Requires:	xmessage
 Suggests:	sane-frontends
 # wine dlopen's these, so let's add the dependencies ourself
 Requires:	libfreetype.so.6%{mark64} libasound.so.2%{mark64}
-Requires:	libXrender.so.1%{mark64} libpng.so.3%{mark64}
+Requires:	libXrender.so.1%{mark64}
+%if %mdkversion >= 201200
+Requires:	libpng15.so.15%{mark64}
+%else
+Requires:	libpng12.so.0%{mark64}
+%endif
 Requires(post): desktop-file-utils
 Requires(postun): desktop-file-utils
 Requires(post): desktop-common-data
@@ -174,6 +169,7 @@ Conflicts:	%{wine} < 1:0.9-3mdk
 %ifarch %{ix86}
 Conflicts:	wine64
 %else
+Conflicts:	wine
 %endif
 
 %description
@@ -211,13 +207,12 @@ programs.
 %endif
 
 %package -n	%{wine}-devel
-Summary:	Static libraries and headers for %{oname}
+Summary:	Static libraries and headers for %{name}
 Group:		Development/C
-Requires:	%{wine} = %{epoch}:%{version}
-Provides:	%{lib_name_devel} = %{epoch}:%{version}-%{release}
-Provides:	%{lib_name_orig}-devel = %{epoch}:%{version}-%{release}
-Obsoletes:	%{lib_name_devel} <= %{epoch}:%{version}-%{release}
-Obsoletes:	%{mklibname -d wine 1} < %{epoch}:%{version}
+Requires:	%{wine} = %{EVRD}
+%rename		%{lib_name_devel}
+Provides:	%{lib_name_orig}-devel = %{EVRD}
+Obsoletes:	%{mklibname -d wine 1} < %{EVRD}
 %ifarch %{ix86}
 Conflicts:	wine64-devel
 %else
@@ -234,11 +229,9 @@ develop programs which make use of wine.
 Wine is often updated.
 
 %prep
-%setup -q -n %{oname}-%o_ver
+%setup -q -n %{name}-%{o_ver}
 %patch1 -p0 -b .chinese
 %patch108 -p1 -b .conf
-%patch401 -p1
-
 sed -i 's,@MDKVERSION@,%{mdkversion},' dlls/ntdll/server.c
 
 %build
@@ -259,7 +252,6 @@ autoreconf
 %configure2_5x	--with-x \
 		--with-pulse \
 		--without-nas \
-		--without-esd \
 %ifarch x86_64
 		--enable-win64
 %endif
@@ -275,10 +267,10 @@ rm -rf %{buildroot}
 install -m755 tools/fnt2bdf -D %{buildroot}%{_bindir}/fnt2bdf
 
 # Allow users to launch Windows programs by just clicking on the .exe file...
-install -m755 %{SOURCE2} -D %{buildroot}%{_initrddir}/%{oname}
+install -m755 %{SOURCE2} -D %{buildroot}%{_initrddir}/%{name}
 
 mkdir -p %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged
-cat > %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{oname}.menu <<EOF
+cat > %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{name}.menu <<EOF
 <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
 "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <Menu>
@@ -289,7 +281,7 @@ cat > %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{oname}
             <Name>Emulators</Name>
             <Menu>
                 <Name>Wine</Name>
-                <Directory>mandriva-%{oname}.directory</Directory>
+                <Directory>mandriva-%{name}.directory</Directory>
                 <Include>
                     <Category>X-MandrivaLinux-MoreApplications-Emulators-Wine</Category>
                 </Include>
@@ -300,10 +292,10 @@ cat > %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{oname}
 EOF
 
 mkdir -p %{buildroot}%{_datadir}/desktop-directories
-cat > %{buildroot}%{_datadir}/desktop-directories/mandriva-%{oname}.directory <<EOF
+cat > %{buildroot}%{_datadir}/desktop-directories/mandriva-%{name}.directory <<EOF
 [Desktop Entry]
 Name=Wine
-Icon=%{oname}
+Icon=%{name}
 Type=Directory
 EOF
 
@@ -316,12 +308,12 @@ for i in	winecfg:Configurator \
 		wineboot:Reboot \
 		"wineconsole cmd":Command\ Line \
 		"wine uninstaller:Wine Software Uninstaller";
-do cat > %{buildroot}%{_datadir}/applications/mandriva-%{oname}-`echo $i|cut -d: -f1`.desktop << EOF
+do cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}-`echo $i|cut -d: -f1`.desktop << EOF
 [Desktop Entry]
 Name=`echo $i|cut -d: -f2`
 Comment=`echo $i|cut -d: -f2`
 Exec=`echo $i|cut -d: -f1`
-Icon=%{oname}
+Icon=%{name}
 Terminal=false
 Type=Application
 Categories=X-MandrivaLinux-MoreApplications-Emulators-Wine;
@@ -343,9 +335,9 @@ sed -i 's,Exec=wine ,Exec=wine64 ,' %{buildroot}%{_datadir}/applications/wine.de
 install -d %{buildroot}{%{_liconsdir},%{_iconsdir},%{_miconsdir}}
 
 # winecfg icon
-convert dlls/user32/resources/oic_winlogo.ico[8] %{buildroot}%{_miconsdir}/%{oname}.png
-convert dlls/user32/resources/oic_winlogo.ico[7] %{buildroot}%{_iconsdir}/%{oname}.png
-convert dlls/user32/resources/oic_winlogo.ico[6] %{buildroot}%{_liconsdir}/%{oname}.png
+convert dlls/user32/resources/oic_winlogo.ico[8] %{buildroot}%{_miconsdir}/%{name}.png
+convert dlls/user32/resources/oic_winlogo.ico[7] %{buildroot}%{_iconsdir}/%{name}.png
+convert dlls/user32/resources/oic_winlogo.ico[6] %{buildroot}%{_liconsdir}/%{name}.png
 
 # notepad icon
 convert programs/notepad/notepad.ico[2] %{buildroot}%{_miconsdir}/notepad.png
@@ -370,16 +362,16 @@ convert programs/msiexec/msiexec.ico[8] %{buildroot}%{_iconsdir}/msiexec.png
 convert programs/msiexec/msiexec.ico[7] %{buildroot}%{_liconsdir}/msiexec.png
 
 # change the icons in the respective .desktop files, in order:
-sed -i 's,Icon=%{oname},Icon=notepad,' %{buildroot}%{_datadir}/applications/mandriva-wine-notepad.desktop
-sed -i 's,Icon=%{oname},Icon=winefile,' %{buildroot}%{_datadir}/applications/mandriva-wine-winefile.desktop
-sed -i 's,Icon=%{oname},Icon=regedit,' %{buildroot}%{_datadir}/applications/mandriva-wine-regedit.desktop
-sed -i 's,Icon=%{oname},Icon=winemine,' %{buildroot}%{_datadir}/applications/mandriva-wine-winemine.desktop
-sed -i 's,Icon=%{oname},Icon=msiexec,' "%{buildroot}%{_datadir}/applications/mandriva-wine-wine uninstaller.desktop"
+sed -i 's,Icon=%{name},Icon=notepad,' %{buildroot}%{_datadir}/applications/mandriva-wine-notepad.desktop
+sed -i 's,Icon=%{name},Icon=winefile,' %{buildroot}%{_datadir}/applications/mandriva-wine-winefile.desktop
+sed -i 's,Icon=%{name},Icon=regedit,' %{buildroot}%{_datadir}/applications/mandriva-wine-regedit.desktop
+sed -i 's,Icon=%{name},Icon=winemine,' %{buildroot}%{_datadir}/applications/mandriva-wine-winemine.desktop
+sed -i 's,Icon=%{name},Icon=msiexec,' "%{buildroot}%{_datadir}/applications/mandriva-wine-wine uninstaller.desktop"
 
 %ifarch x86_64
-chrpath -d %{buildroot}%{_bindir}/{wine64,wineserver,wmc,wrc} %{buildroot}%{_libdir}/%{oname}/*.so
+chrpath -d %{buildroot}%{_bindir}/{wine64,wineserver,wmc,wrc} %{buildroot}%{_libdir}/%{name}/*.so
 %else
-chrpath -d %{buildroot}%{_bindir}/{wine,wineserver,wmc,wrc} %{buildroot}%{_libdir}/%{oname}/*.so
+chrpath -d %{buildroot}%{_bindir}/{wine,wineserver,wmc,wrc} %{buildroot}%{_libdir}/%{name}/*.so
 %endif
 
 %ifarch x86_64
@@ -390,24 +382,20 @@ you need to also install the 'wine32' package from the 32-bit repository.
 EOF
 %endif
 
-%clean
-rm -fr %{buildroot}
-
 %preun -n %{wine}
-%_preun_service %{oname}
+%_preun_service %{name}
 
 %post -n %{wine}
-%_post_service %{oname}
+%_post_service %{name}
 
 %files -n %{wine}
-%defattr(-,root,root)
 %doc ANNOUNCE AUTHORS README
 %ifarch x86_64
 %doc README.install.urpmi
 %{_bindir}/wine64
-# %{_bindir}/wine64-preloader
+%{_bindir}/wine64-preloader
 %endif
-%{_initrddir}/%{oname}
+%{_initrddir}/%{name}
 %{_bindir}/winecfg
 %{_bindir}/wineconsole*
 %{_bindir}/wineserver
@@ -438,13 +426,13 @@ rm -fr %{buildroot}
 %{_mandir}/man1/winefile.1*
 %{_mandir}/man1/winemine.1*
 %{_mandir}/man1/winepath.1*
-%dir %{_datadir}/%{oname}
-%{_datadir}/%{oname}/generic.ppd
-%{_datadir}/%{oname}/%{oname}.inf
-%{_datadir}/%{oname}/l_intl.nls
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/generic.ppd
+%{_datadir}/%{name}/%{name}.inf
+%{_datadir}/%{name}/l_intl.nls
 %{_datadir}/applications/*.desktop
-%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{oname}.menu
-%{_datadir}/desktop-directories/mandriva-%{oname}.directory
+%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{name}.menu
+%{_datadir}/desktop-directories/mandriva-%{name}.directory
 %dir %{_datadir}/wine/fonts
 %{_datadir}/wine/fonts/*
 %{_miconsdir}/*.png
@@ -453,33 +441,31 @@ rm -fr %{buildroot}
 
 %ifarch %{ix86}
 %files -n wine32
-%defattr(-,root,root)
 %{_bindir}/wine
 %{_bindir}/wine-preloader
 %endif
 
 %{_libdir}/libwine*.so.%{lib_major}*
-%dir %{_libdir}/%{oname}
-%{_libdir}/%{oname}/*.cpl.so
-%{_libdir}/%{oname}/*.drv.so
-%{_libdir}/%{oname}/*.dll.so
-%{_libdir}/%{oname}/*.exe.so
-%{_libdir}/%{oname}/*.acm.so
-%{_libdir}/%{oname}/*.ocx.so
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/*.cpl.so
+%{_libdir}/%{name}/*.drv.so
+%{_libdir}/%{name}/*.dll.so
+%{_libdir}/%{name}/*.exe.so
+%{_libdir}/%{name}/*.acm.so
+%{_libdir}/%{name}/*.ocx.so
 %ifarch %{ix86}
-%{_libdir}/%{oname}/*.vxd.so
-%{_libdir}/%{oname}/*16.so
+%{_libdir}/%{name}/*.vxd.so
+%{_libdir}/%{name}/*16.so
 %endif
-%{_libdir}/%{oname}/*.tlb.so
-%{_libdir}/%{oname}/*.ds.so
-%{_libdir}/%{oname}/*.sys.so
-%{_libdir}/%{oname}/fakedlls
+%{_libdir}/%{name}/*.tlb.so
+%{_libdir}/%{name}/*.ds.so
+%{_libdir}/%{name}/*.sys.so
+%{_libdir}/%{name}/fakedlls
 
 %files -n %{wine}-devel
-%defattr(-,root,root)
-%{_libdir}/%{oname}/*.a
+%{_libdir}/%{name}/*.a
 %{_libdir}/libwine*.so
-%{_libdir}/%{oname}/*.def
+%{_libdir}/%{name}/*.def
 %{_includedir}/*
 %{_bindir}/fnt2bdf
 %{_bindir}/wmc
@@ -501,4 +487,4 @@ rm -fr %{buildroot}
 %{_mandir}/man1/winedbg.1*
 %{_mandir}/man1/wineg++.1*
 %{_mandir}/man1/winegcc.1*
-# %{_mandir}/pl.UTF-8/man1/wine.1*
+%{_mandir}/pl.UTF-8/man1/wine.1*
