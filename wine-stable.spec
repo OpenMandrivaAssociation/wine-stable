@@ -1,8 +1,8 @@
 %ifarch x86_64
-%define	wine	wine64
+%define	wine	wine64-stable
 %define	mark64	()(64bit)
 %else
-%define	wine	wine
+%define	wine	wine-stable
 %define	mark64	%{nil}
 %endif
 %define	lib_name_orig	lib%{name}
