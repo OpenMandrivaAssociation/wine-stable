@@ -229,7 +229,7 @@ develop programs which make use of wine.
 Wine is often updated.
 
 %prep
-%setup -q -n %{name}-%{o_ver}
+%setup -q -n %{oname}-%{o_ver}
 %patch1 -p0 -b .chinese
 %patch108 -p1 -b .conf
 sed -i 's,@MDKVERSION@,%{mdkversion},' dlls/ntdll/server.c
