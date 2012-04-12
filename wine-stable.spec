@@ -19,7 +19,7 @@
 # wine64 - all 64-bit files (suggests 'wine32')
 # - Anssi 07/2010
 
-Name:		wine
+Name:		wine-stable
 #(peroyvind): please do backports for new versions
 Version:	1.4
 %define rel	1
