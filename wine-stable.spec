@@ -426,7 +426,7 @@ EOF
 %{_mandir}/man1/winefile.1*
 %{_mandir}/man1/winemine.1*
 %{_mandir}/man1/winepath.1*
-%dir %{_datadir}/%{name}
+%dir %{_datadir}/%{oname}
 %{_datadir}/%{oname}/generic.ppd
 %{_datadir}/%{oname}/%{oname}.inf
 %{_datadir}/%{oname}/l_intl.nls
