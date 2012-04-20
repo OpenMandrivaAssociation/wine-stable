@@ -427,9 +427,9 @@ EOF
 %{_mandir}/man1/winemine.1*
 %{_mandir}/man1/winepath.1*
 %dir %{_datadir}/%{name}
-%{_datadir}/%{name}/generic.ppd
-%{_datadir}/%{name}/%{name}.inf
-%{_datadir}/%{name}/l_intl.nls
+%{_datadir}/%{oname}/generic.ppd
+%{_datadir}/%{oname}/%{oname}.inf
+%{_datadir}/%{oname}/l_intl.nls
 %{_datadir}/applications/*.desktop
 %{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{name}.menu
 %{_datadir}/desktop-directories/mandriva-%{name}.directory
