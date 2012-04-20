@@ -446,26 +446,26 @@ EOF
 %endif
 
 %{_libdir}/libwine*.so.%{lib_major}*
-%dir %{_libdir}/%{name}
-%{_libdir}/%{name}/*.cpl.so
-%{_libdir}/%{name}/*.drv.so
-%{_libdir}/%{name}/*.dll.so
-%{_libdir}/%{name}/*.exe.so
-%{_libdir}/%{name}/*.acm.so
-%{_libdir}/%{name}/*.ocx.so
+%dir %{_libdir}/%{oname}
+%{_libdir}/%{oname}/*.cpl.so
+%{_libdir}/%{oname}/*.drv.so
+%{_libdir}/%{oname}/*.dll.so
+%{_libdir}/%{oname}/*.exe.so
+%{_libdir}/%{oname}/*.acm.so
+%{_libdir}/%{oname}/*.ocx.so
 %ifarch %{ix86}
-%{_libdir}/%{name}/*.vxd.so
-%{_libdir}/%{name}/*16.so
+%{_libdir}/%{oname}/*.vxd.so
+%{_libdir}/%{oname}/*16.so
 %endif
-%{_libdir}/%{name}/*.tlb.so
-%{_libdir}/%{name}/*.ds.so
-%{_libdir}/%{name}/*.sys.so
-%{_libdir}/%{name}/fakedlls
+%{_libdir}/%{oname}/*.tlb.so
+%{_libdir}/%{oname}/*.ds.so
+%{_libdir}/%{oname}/*.sys.so
+%{_libdir}/%{oname}/fakedlls
 
 %files -n %{wine}-devel
-%{_libdir}/%{name}/*.a
+%{_libdir}/%{oname}/*.a
 %{_libdir}/libwine*.so
-%{_libdir}/%{name}/*.def
+%{_libdir}/%{oname}/*.def
 %{_includedir}/*
 %{_bindir}/fnt2bdf
 %{_bindir}/wmc
