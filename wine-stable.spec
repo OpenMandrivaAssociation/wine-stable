@@ -65,62 +65,61 @@ BuildRequires:	gcc >= 4.4
 BuildRequires:  bison flex
 BuildRequires:  gpm-devel 
 BuildRequires:  perl-devel
-BuildRequires:  ncurses-devel
+BuildRequires:  pkgconfig(ncurses)
 BuildRequires:  cups-devel   
 BuildRequires:  sane-devel   
 BuildRequires:  lcms-devel   
 BuildRequires:  autoconf     
 BuildRequires:  docbook-utils docbook-dtd-sgml
 BuildRequires:  docbook-utils docbook-dtd-sgml sgml-tools
-BuildRequires:  jackit-devel
-BuildRequires:  pulseaudio-devel
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  libmpg123-devel 
 BuildRequires:  openal-devel    
-BuildRequires:  libalsa-devel   
-BuildRequires:  gstreamer0.10-devel libgstreamer0.10-plugins-base-devel
+BuildRequires:  alsa-oss-devel   
+BuildRequires:  pkgconfig(gstreamer-0.10) libgstreamer0.10-plugins-base-devel
 BuildRequires:  isdn4k-utils-devel
 BuildRequires:  glibc-static-devel
 BuildRequires:  chrpath
-BuildRequires:  ungif-devel xpm-devel
-BuildRequires:  tiff-devel
+BuildRequires:  ungif-devel pkgconfig(xpm)
+BuildRequires:  pkgconfig(libtiff-4)
 BuildRequires:  librsvg   
 BuildRequires:  imagemagick
-BuildRequires:  gphoto2-devel
+BuildRequires:  pkgconfig(libgphoto2)
 BuildRequires:  desktop-file-utils
 BuildRequires:  openldap-devel    
-BuildRequires:  libxslt-devel     
+BuildRequires:  pkgconfig(libxslt)     
 BuildRequires:  dbus-devel        
 BuildRequires:  valgrind          
 BuildRequires:  gsm-devel         
 BuildRequires:  unixODBC-devel    
-BuildRequires:  gnutls-devel      
+BuildRequires:  pkgconfig(gnutls)      
 BuildRequires:  gettext-devel
-BuildRequires:  mesaglu-devel
+BuildRequires:  pkgconfig(glu)
 BuildRequires:  libv4l-devel 
 BuildRequires:  libxcursor-devel libxcomposite-devel
-BuildRequires:  libxinerama-devel libxrandr-devel   
-BuildRequires:  libx11-devel libxrender-devel
-BuildRequires:  libxext-devel libsm-devel
-BuildRequires:  fontforge fontconfig-devel freetype2-devel
+BuildRequires:  pkgconfig(xinerama) pkgconfig(xrandr)   
+BuildRequires:  pkgconfig(x11) pkgconfig(xrender)
+BuildRequires:  pkgconfig(xext) libsm-devel
+BuildRequires:  fontforge fontconfig-devel pkgconfig(freetype2)
 
-BuildRequires:	bison flex gpm-devel perl-devel ncurses-devel sgml-tools
-BuildRequires:	libx11-devel libxrender-devel libxext-devel libsm-devel
-BuildRequires:	freetype2-devel autoconf docbook-utils docbook-dtd-sgml
-BuildRequires:	cups-devel jackit-devel imagemagick isdn4k-utils-devel xpm-devel
+BuildRequires:	bison flex gpm-devel perl-devel pkgconfig(ncurses) sgml-tools
+BuildRequires:	pkgconfig(x11) pkgconfig(xrender) pkgconfig(xext) libsm-devel
+BuildRequires:	pkgconfig(freetype2) autoconf docbook-utils docbook-dtd-sgml
+BuildRequires:	cups-devel pkgconfig(jack) imagemagick isdn4k-utils-devel pkgconfig(xpm)
 BuildRequires:	sane-devel glibc-static-devel ungif-devel chrpath
-BuildRequires:	desktop-file-utils libalsa-devel openldap-devel lcms-devel
-BuildRequires:	libxslt-devel dbus-devel
-BuildRequires:	valgrind librsvg pulseaudio-devel gettext-devel
+BuildRequires:	desktop-file-utils alsa-oss-devel openldap-devel lcms-devel
+BuildRequires:	pkgconfig(libxslt) dbus-devel
+BuildRequires:	valgrind librsvg pkgconfig(libpulse) gettext-devel
 BuildRequires:	gsm-devel
-BuildRequires:	mesaglu-devel
+BuildRequires:	pkgconfig(glu)
 BuildRequires:	fontforge
-BuildRequires:	gphoto2-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	libmpg123-devel
-BuildRequires:	openal-devel libxrandr-devel libxinerama-devel libxcomposite-devel
+BuildRequires:	openal-devel pkgconfig(xrandr) pkgconfig(xinerama) libxcomposite-devel
 BuildRequires:	libxcursor-devel fontconfig-devel
-BuildRequires:	gnutls-devel tiff-devel libv4l-devel
-BuildRequires:	gstreamer0.10-devel libgstreamer0.10-plugins-base-devel
+BuildRequires:	pkgconfig(gnutls) pkgconfig(libtiff-4) libv4l-devel
+BuildRequires:	pkgconfig(gstreamer-0.10) libgstreamer0.10-plugins-base-devel
 %if %mdvver >= 201100
 BuildRequires:	prelink
 %endif
@@ -488,3 +487,30 @@ EOF
 %{_mandir}/man1/wineg++.1*
 %{_mandir}/man1/winegcc.1*
 %{_mandir}/pl.UTF-8/man1/wine.1*
+
+
+%changelog
+* Wed Jun 20 2012 Zombie Ryushu <ryushu@mandriva.org> 1:1.4.1-1.1mdv2011.0
++ Revision: 806473
+- upgrade to 1.4.1
+
+* Fri Apr 20 2012 Zombie Ryushu <ryushu@mandriva.org> 1:1.4-1.1
++ Revision: 792462
+- fix oname
+- deal with name change
+- Fix revision
+- Fix name
+- Fix name
+- Fix name
+- Update Stable version to 1.4
+- Update Stable version to 1.4
+- Update Stable version to 1.4
+- Update Stable version to 1.4
+- increment and rebuild
+- fix prelink condition
+
+* Sun Jun 19 2011 Zombie Ryushu <ryushu@mandriva.org> 1:1.2.3-1
++ Revision: 686079
+- fix preun
+- imported package wine-stable
+
